@@ -71,7 +71,7 @@ public class MainAuton extends LinearOpMode {
         // Set Motor Directions
         //frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        //backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
             
         // SETUP SENSORS
@@ -80,7 +80,7 @@ public class MainAuton extends LinearOpMode {
         color = hardwareMap.get(ColorSensor.class, "colorSensor");
             
         //INITIALIZE IMU
-        imuAsIMU.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
+            imuAsIMU.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.UP)));
         orientation = imuAsIMU.getRobotYawPitchRollAngles();
         angularVelocity = imuAsIMU.getRobotAngularVelocity(AngleUnit.DEGREES);
         robotYaw = orientation.getYaw(AngleUnit.DEGREES);
@@ -88,11 +88,11 @@ public class MainAuton extends LinearOpMode {
         telemetry.addData("IMU status", "Initialized");
         telemetry.update();
         
+        imuAsIMU.resetYaw();
+        
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-        
-        imuAsIMU.resetYaw();
 
         // Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -134,7 +134,7 @@ public class MainAuton extends LinearOpMode {
             if (codeStep == 1)
             {
                 // Check Middle Pos.
-                if (distance_M < 40)
+                if (distance_M < 35)
                 {
                     // Move forward
                     vspeed = 0.3;
@@ -143,55 +143,72 @@ public class MainAuton extends LinearOpMode {
                         vspeed = 0;
                         tick = 0;
                         targetRot = 0;
-                        codeStep = 2;
+                        codeStep = 4;
                     }
                 }
                 else
                 {
-                    // Check Right Pos.
-                    //Turn
-                    vspeed = 0;
-                    targetRot = 60;
-                    if(tick>30)
+                    tick = 0;
+                    codeStep = 2;
+                }
+            }    
+            
+            if (codeStep == 2)
+            {
+                // Check Right Pos.
+                //Turn
+                vspeed = 0;
+                targetRot = 50;
+                if(tick>20)
+                {
+                    //Check
+                    if (distance_M < 35)
                     {
-                        //Check
-                        if (distance_M < 40)
+                        //Move
+                        vspeed = 0.3;
+                        if (tick > 35)
                         {
-                            //Move
-                            vspeed = 0.3;
-                            if (tick > 40)
-                            {
-                                // Stop Moving
-                                vspeed = 0;
-                                tick = 0;
-                                codeStep = 2;
-                            }
-                        }
-                        else
-                        {
-                            // Go Left
-                            // Turn
+                            // Stop Moving
                             vspeed = 0;
-                            targetRot = -60;
-                            if(tick>20)
-                            {
-                                // Move
-                                vspeed = 0.3;
-                                if (tick > 40)
-                                {
-                                    // Stop Moving
-                                    vspeed = 0;
-                                    tick = 0;
-                                    codeStep = 2;
-                                }
-                            }
+                            codeStep = 4;
                         }
+                    }
+                    else if (tick < 25)
+                    {
+                        codeStep = 3;
+                        tick = 0;
                     }
                 }
             }
-            
-            
-            
+            if (codeStep == 3)
+            {
+                // Go Left
+                // Turn
+                vspeed = 0;
+                targetRot = -60;
+                if(tick>20)
+                {
+                    // Move
+                    vspeed = 0.3;
+                    targetRot = -60;
+                    if (tick > 35)
+                    {
+                        // Stop Moving
+                        vspeed = 0.3;
+                        tick = 0;
+                        codeStep = 4;
+                    }
+                }
+            }
+            if (codeStep == 4)
+            {
+                vspeed = -0.3;
+                if (tick > 20)
+                {
+                    vspeed = 0;
+                    codeStep = 5;
+                }
+            }
             
             
             // Set Motor Powers
@@ -202,7 +219,9 @@ public class MainAuton extends LinearOpMode {
             
             // Telemetry
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Distance", distance_M);
             telemetry.addData("Tick", tick);
+            telemetry.addData("Yaw", robotYaw);
             telemetry.addData("Code Step", codeStep);
             telemetry.update();
         }
