@@ -22,6 +22,12 @@ public class MainDriver extends LinearOpMode {
   private DcMotor backLeft;
   private DcMotor frontLeft;
   private DcMotor frontRight;
+  
+  private DcMotor arm;
+  
+  private Servo shooterServo;
+  private Servo armRot;
+  private Servo claw;
   //private Servo ClawRight;
   //private Servo ClawLeft;
   
@@ -34,6 +40,9 @@ public class MainDriver extends LinearOpMode {
   private double aCos;
   private double angle;
   
+  private boolean kaboom;
+  private boolean clawOpen;
+  
   /**
    * This function is executed when this OpMode is selected from the Driver Station.
    */
@@ -44,6 +53,12 @@ public class MainDriver extends LinearOpMode {
     backLeft = hardwareMap.get(DcMotor.class, "backLeft");
     frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
     frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+    
+    arm = hardwareMap.get(DcMotor.class, "arm");
+    
+    shooterServo = hardwareMap.get(Servo.class, "shooterServo");
+    armRot = hardwareMap.get(Servo.class, "claw");
+    claw = hardwareMap.get(Servo.class, "clawRot");
     //ClawLeft = hardwareMap.get(Servo.class, "ClawLeft");
     //ClawRight = hardwareMap.get(Servo.class, "ClawRight");
     
@@ -70,8 +85,8 @@ public class MainDriver extends LinearOpMode {
       double blp = 0;
       double brp = 0;
       
-      double speed = 0.9;
-      double turn = 0.8;
+      double speed = 0.7;
+      double turn = 0.3;
       
       double clawdir = 0;
       
@@ -84,6 +99,16 @@ public class MainDriver extends LinearOpMode {
         aCos = Math.cos(yaw);
         angle = Math.atan2((0.001*gamepad1.left_stick_y - 0.001*gamepad1.left_stick_x), (0.001*gamepad1.left_stick_x + 0.001*gamepad1.left_stick_y));
 
+        arm.setPower((gamepad1.right_trigger * 0.9)-(gamepad1.left_trigger * 50));
+        
+        if(gamepad1.right_trigger > 0)
+        {
+          armRot.setPosition(0);
+        }
+        if(gamepad1.left_trigger > 0)
+        {
+          armRot.setPosition(1);
+        }
         
         //Rotational Movement
         flp = flp-gamepad1.right_stick_x * turn;
@@ -109,7 +134,30 @@ public class MainDriver extends LinearOpMode {
         backLeft.setPower(blp);
         backRight.setPower(brp);
         
-        clawdir = clawdir + (gamepad1.right_stick_y / 10);
+        if (gamepad1.circle == true)
+        {
+          kaboom = true;
+        }
+        
+        if(kaboom)
+        {
+          shooterServo.setPosition(0);
+        }
+        else
+        {
+          shooterServo.setPosition(1);
+        }
+        
+        if (gamepad1.cross == true)
+        {
+          clawOpen = true;
+        }
+        if (gamepad1.triangle == true)
+        {
+          clawOpen = false;
+        }
+        
+        //clawdir = clawdir + (gamepad1.right_stick_y / 10);
         
         //Move Claw
         //ClawLeft.setPosition(clawdir);
