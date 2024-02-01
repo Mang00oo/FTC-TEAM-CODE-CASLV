@@ -21,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(name="MainAuton", group="Main Code")
@@ -43,6 +44,12 @@ public class MainAuton extends LinearOpMode {
 	private double vspeed;
 	private double codeStep;
 	private double propPos;
+	private double targettick;
+	
+	private double flp;
+	private double frp;
+	private double blp;
+	private double brp;
 
 	// Declare OpMode members.
 	private ElapsedTime runtime = new ElapsedTime();;
@@ -62,6 +69,7 @@ public class MainAuton extends LinearOpMode {
 		vspeed = 0;
 	
 		codeStep = 0;
+		targettick = 0;
 		
 		// Assign Motors
 		backRight = hardwareMap.get(DcMotor.class, "backRight");
@@ -112,6 +120,15 @@ public class MainAuton extends LinearOpMode {
 			if (robotYaw < targetRot){
 				rightPower = ((targetRot + robotYaw)/-80)+vspeed;
 				leftPower = ((targetRot + robotYaw)/80)+vspeed;
+			}
+			
+			if (hspeed != 0)
+			{
+				//Horizontal Movement
+				flp = (flp - 1) * hspeed;
+				frp = (frp + 1) * hspeed;
+				blp = (blp + 1) * hspeed;
+				brp = (brp - 1) * hspeed;
 			}
 			
 			// Update Tick
@@ -236,7 +253,7 @@ public class MainAuton extends LinearOpMode {
 			if (codeStep == 6)
 			{
 				vspeed = 0.3;
-				if (distance_M < 19)
+				if (distance_M < 25)
 				{
 					vspeed = 0;
 					tick = 0;
@@ -248,18 +265,20 @@ public class MainAuton extends LinearOpMode {
 			{
 				if (propPos == 0)
 				{
-					hspeed = -0.2;
-					tick = 10;
+					hspeed = -0.3;
+					targettick = 17;
 				}
 				if (propPos == 1)
 				{
-					tick = 21;
+					hspeed = -0.3;
+					targettick = 7;
 				}
 				if (propPos == 2)
 				{
+					targettick = 45;
 					hspeed = -0.3;
 				}
-				if (tick > 20)
+				if (tick > targettick)
 				{
 					hspeed = 0;
 					tick = 0;
@@ -267,18 +286,30 @@ public class MainAuton extends LinearOpMode {
 				}
 			}
 			
-			
 			// Set Motor Powers
-			frontLeft.setPower(-leftPower);
-			frontRight.setPower(-rightPower);
-			backLeft.setPower(-leftPower);
-			backRight.setPower(-rightPower);
+			if (hspeed != 0)
+			{
+				frontLeft.setPower(flp);
+				frontRight.setPower(frp);
+				backLeft.setPower(blp);
+				backRight.setPower(brp);
+			}
+			else
+			{
+				frontLeft.setPower(-leftPower);
+				frontRight.setPower(-rightPower);
+				backLeft.setPower(-leftPower);
+				backRight.setPower(-rightPower);
+			}
+			
+			
 			
 			// Telemetry
 			telemetry.addData("Status", "Run Time: " + runtime.toString());
 			telemetry.addData("Distance", distance_M);
 			telemetry.addData("Tick", tick);
 			telemetry.addData("Yaw", robotYaw);
+			telemetry.addData("hspeed", hspeed);
 			telemetry.addData("Code Step", codeStep);
 			telemetry.update();
 		}
