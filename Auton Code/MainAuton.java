@@ -2,6 +2,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -20,11 +21,12 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name="MainAuton", group="Main Code")
+@Autonomous(name="Auton - Red", group="Main Code")
 
 public class MainAuton extends LinearOpMode {
 	private IMU imuAsIMU;
@@ -38,6 +40,7 @@ public class MainAuton extends LinearOpMode {
 	private DcMotor frontLeft;
 	private DcMotor frontRight;
 	private double distance_M;
+	private TouchSensor touch;
 	private DistanceSensor distance;
 	private ColorSensor color;
 	private double hspeed;
@@ -50,6 +53,9 @@ public class MainAuton extends LinearOpMode {
 	private double frp;
 	private double blp;
 	private double brp;
+	
+	private Servo armChute;
+	private DcMotor arm;
 
 	// Declare OpMode members.
 	private ElapsedTime runtime = new ElapsedTime();;
@@ -76,6 +82,9 @@ public class MainAuton extends LinearOpMode {
 		backLeft = hardwareMap.get(DcMotor.class, "backLeft");
 		frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
 		frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+		
+		armChute = hardwareMap.get(Servo.class, "armChute");
+		arm = hardwareMap.get(DcMotor.class, "armMotor");
 			
 		// Set Motor Directions
 		//frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -87,9 +96,10 @@ public class MainAuton extends LinearOpMode {
 		imuAsIMU = hardwareMap.get(IMU.class, "imu");
 		distance = hardwareMap.get(DistanceSensor.class, "DistanceSensor");
 		color = hardwareMap.get(ColorSensor.class, "colorSensor");
+		touch = hardwareMap.get(TouchSensor.class, "touchSensor");
 			
 		//INITIALIZE IMU
-			imuAsIMU.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.UP)));
+		imuAsIMU.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.RIGHT)));
 		orientation = imuAsIMU.getRobotYawPitchRollAngles();
 		angularVelocity = imuAsIMU.getRobotAngularVelocity(AngleUnit.DEGREES);
 		robotYaw = orientation.getYaw(AngleUnit.DEGREES);
@@ -102,6 +112,8 @@ public class MainAuton extends LinearOpMode {
 		// Wait for the game to start (driver presses PLAY)
 		waitForStart();
 		runtime.reset();
+		
+		armChute.setPosition(0.2);
 
 		// Run until the end of the match (driver presses STOP)
 		while (opModeIsActive()) {
@@ -132,7 +144,7 @@ public class MainAuton extends LinearOpMode {
 			}
 			
 			// Update Tick
-			tick = tick +1;
+			tick = tick + 1;
 			
 			// AUTON SEQUENCE
 			
@@ -140,7 +152,7 @@ public class MainAuton extends LinearOpMode {
 			if (codeStep == 0)
 			{
 				vspeed = 0.3;
-				if (tick > 40)
+				if (tick > 47)
 				{
 				vspeed = 0;
 				tick = 0;
@@ -177,7 +189,7 @@ public class MainAuton extends LinearOpMode {
 				// Check Right Pos.
 				//Turn
 				vspeed = 0;
-				targetRot = 50;
+				targetRot = 60;
 				if(tick>20)
 				{
 					//Check
@@ -185,7 +197,7 @@ public class MainAuton extends LinearOpMode {
 					{
 						//Move
 						vspeed = 0.3;
-						if (tick > 32)
+						if (tick > 37)
 						{
 							// Stop Moving
 							vspeed = 0;
@@ -208,12 +220,12 @@ public class MainAuton extends LinearOpMode {
 				// Turn
 				vspeed = 0;
 				targetRot = -60;
-				if(tick>20)
+				if(tick > 20)
 				{
 					// Move
 					vspeed = 0.3;
 					targetRot = -60;
-					if (tick > 32)
+					if (tick > 36)
 					{
 						// Stop Moving
 						vspeed = 0.3;
@@ -249,11 +261,12 @@ public class MainAuton extends LinearOpMode {
 					codeStep = 6;
 				}
 			}
+			
 			// Goes to the board
 			if (codeStep == 6)
 			{
 				vspeed = 0.3;
-				if (distance_M < 25)
+				if (distance_M < 18)
 				{
 					vspeed = 0;
 					tick = 0;
@@ -266,16 +279,16 @@ public class MainAuton extends LinearOpMode {
 				if (propPos == 0)
 				{
 					hspeed = -0.3;
-					targettick = 17;
+					targettick = 50;
 				}
 				if (propPos == 1)
 				{
 					hspeed = -0.3;
-					targettick = 7;
+					targettick = 25;
 				}
 				if (propPos == 2)
 				{
-					targettick = 45;
+					targettick = 106;
 					hspeed = -0.3;
 				}
 				if (tick > targettick)
@@ -283,6 +296,28 @@ public class MainAuton extends LinearOpMode {
 					hspeed = 0;
 					tick = 0;
 					codeStep = 8;
+				}
+			}
+			
+			// Places pixel on board
+			if (codeStep == 8)
+			{
+				arm.setPower(-0.5);
+				if (tick > 32)
+				{
+					armChute.setPosition(0);
+				}
+				if (tick > 39)
+				{
+					arm.setPower(0);
+				}
+				if (tick > 54)
+				{
+					arm.setPower(0.5);
+				}
+				if (tick > 62)
+				{
+					arm.setPower(0);
 				}
 			}
 			
