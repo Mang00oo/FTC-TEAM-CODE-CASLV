@@ -1,6 +1,6 @@
-//Main Driver code for FTC Team _Teamnumber_
+// Main Driver code for FTC Team 19810
 
-//Import packages
+// Import packages
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -22,61 +22,47 @@ public class MainDriver extends LinearOpMode {
   private DcMotor backLeft;
   private DcMotor frontLeft;
   private DcMotor frontRight;
+  
+  private DcMotor armLeft;
+  private DcMotor armRight;
+  
+  private DcMotor intakeTop;
+  private DcMotor intakeBottom;
+  
+  private Servo clawPivotLeft;
+  private Servo clawPivotRight;
+  private Servo claw;
+  
   private Servo shooter;
-  //private Servo ClawLeft;
   
-  private DcMotor arm;
-  private Servo clawTop;
-  private Servo clawBottom;
-  private Servo clawPivot;
-  private Servo armChute;
-  
-  
-  private IMU imuAsIMU;
-  
-  private YawPitchRollAngles orientation;
-  private double yaw;
-  
-  private double aSin;
-  private double aCos;
-  private double angle;
-  
-  private boolean kaboom;
-  
-  /**
-   * This function is executed when this OpMode is selected from the Driver Station.
-   */
   @Override
   public void runOpMode() {
-	//Get hardware
+	
+	// Get hardware
 	backRight = hardwareMap.get(DcMotor.class, "backRight");
 	backLeft = hardwareMap.get(DcMotor.class, "backLeft");
 	frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
 	frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+	
 	shooter = hardwareMap.get(Servo.class, "shooter");
 	
-	arm = hardwareMap.get(DcMotor.class, "armMotor");
+	armLeft = hardwareMap.get(DcMotor.class, "armLeft");
+	armRight = hardwareMap.get(DcMotor.class, "armRight");
 	
-	clawTop = hardwareMap.get(Servo.class, "clawTop");
-	clawBottom = hardwareMap.get(Servo.class, "clawBottom");
-	clawPivot = hardwareMap.get(Servo.class, "clawPivot");
-	armChute = hardwareMap.get(Servo.class, "armChute");
+	intakeTop = hardwareMap.get(DcMotor.class, "intakeTop");
+	intakeBottom = hardwareMap.get(DcMotor.class, "intakeBottom");
 	
+	claw = hardwareMap.get(Servo.class, "claw");
+	clawPivotLeft = hardwareMap.get(Servo.class, "clawPivotLeft");
+	clawPivotRight = hardwareMap.get(Servo.class, "clawPivotRight");
 	
-	//Set motor directions
+	// Set motor directions
 	//frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 	frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
 	//backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 	backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 	
-	//Gyro Stuff
-	imuAsIMU = hardwareMap.get(IMU.class, "imu");
-	AngularVelocity angularVelocity;
-	imuAsIMU.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
-	//Reset Yaw
-	imuAsIMU.resetYaw();
-	
-	//Main Loop
+	// Main Loop
 	waitForStart();
 	if (opModeIsActive()) {
 	  
@@ -86,86 +72,107 @@ public class MainDriver extends LinearOpMode {
 	  double blp = 0;
 	  double brp = 0;
 	  
-	  double speed = 0.5;
-	  double turn = 0.4;
+	  double speed = 1.0;
+	  double turn = 1.0;
 	  
-	  kaboom = false;
+	  boolean kaboom = false;
 	  
-	  double clawdir = 0;
+	  boolean intakeOn = false;
+	  boolean buttonPress = false;
 	  
 	  while (opModeIsActive()) {
 		
-		//Get Orientation
-		orientation = imuAsIMU.getRobotYawPitchRollAngles();
-		yaw = orientation.getYaw(AngleUnit.DEGREES);
-		aSin = Math.sin(yaw);
-		aCos = Math.cos(yaw);
-		angle = Math.atan2((0.001*gamepad1.left_stick_y - 0.001*gamepad1.left_stick_x), (0.001*gamepad1.left_stick_x + 0.001*gamepad1.left_stick_y));
-
-		arm.setPower((gamepad1.left_trigger * 0.4)-(gamepad1.right_trigger * 0.4));
+		// Arm Movement
+		armLeft.setPower((gamepad1.left_trigger * -1)-(gamepad1.right_trigger * -1));
+		armRight.setPower((gamepad1.left_trigger * 1)-(gamepad1.right_trigger * 1));
 		
-		if (gamepad1.dpad_up)
+		// Intake Toggle
+		if (gamepad1.square && buttonPress == false)
 		{
-			clawBottom.setPosition(1);
-			clawPivot.setPosition(0.8);
+			intakeOn = !intakeOn;
+			buttonPress = true;
 		}
-		if (gamepad1.dpad_down)
+		if (intakeOn)
 		{
-			clawBottom.setPosition(0.44);
-			clawPivot.setPosition(0.55);
+			intakeTop.setPower(-0.8);
+			intakeBottom.setPower(10);
+		} else
+		{
+			intakeTop.setPower(0);
+			intakeBottom.setPower(0);
 		}
-		
-		if (gamepad1.dpad_left)
+		if (gamepad1.square == false)
 		{
-			clawTop.setPosition(0.24);
-		}
-		if (gamepad1.dpad_right)
-		{
-			clawTop.setPosition(0);
+			buttonPress = false;
 		}
 		
-		//Rotational Movement
-		flp = flp-gamepad1.right_stick_x * turn;
-		frp = frp+gamepad1.right_stick_x * turn;
-		blp = blp-gamepad1.right_stick_x * turn;
-		brp = brp+gamepad1.right_stick_x * turn;
+		// Claw pivoting and placing
 		
-		//Vertical Movement
-		flp = flp+gamepad1.left_stick_y * speed;
-		frp = frp+gamepad1.left_stick_y * speed;
-		blp = blp+gamepad1.left_stick_y * speed;
-		brp = brp+gamepad1.left_stick_y * speed;
+		if (gamepad1.right_bumper)
+		{
+			clawPivotLeft.setPosition(1);
+			clawPivotRight.setPosition(0);
+		}
+		else
+		{
+			clawPivotLeft.setPosition(1);
+			clawPivotRight.setPosition(0);
+		}
 		
-		//Horizontal Movement
-		flp = (flp - gamepad1.left_stick_x) * speed;
-		frp = (frp + gamepad1.left_stick_x) * speed;
-		blp = (blp + gamepad1.left_stick_x) * speed;
-		brp = (brp - gamepad1.left_stick_x) * speed;
+		if (gamepad1.left_bumper)
+		{
+			claw.setPosition(1);
+		}
+		else
+		{
+			claw.setPosition(0);
+		}
 		
-		//Set motor powers
-		frontLeft.setPower(flp);
-		frontRight.setPower(frp);
-		backLeft.setPower(blp);
-		backRight.setPower(brp);
-		
-		if(gamepad1.circle)
+		// Shooter
+		if (gamepad1.circle)
 		{
 		  kaboom = true;
 		}
-		if(kaboom)
+		if (kaboom)
 		{
 		  shooter.setPosition(0.9);
 		} else {
 		  shooter.setPosition(0.5);
 		}
-		//clawdir = clawdir + (gamepad1.right_stick_y / 10);
 		
-		//Move Claw
-		//ClawLeft.setPosition(clawdir);
-		//ClawRight.setPosition(clawdir);
-
-		telemetry.addData("Yaw", yaw);
-		telemetry.addData("ANGLE", angle);
+		
+		
+		// Reset Powers
+		flp = 0;
+		frp = 0;
+		blp = 0;
+		brp = 0;
+		
+		// Rotational Movement
+		flp = flp-gamepad1.right_stick_x * turn;
+		frp = frp+gamepad1.right_stick_x * turn;
+		blp = blp-gamepad1.right_stick_x * turn;
+		brp = brp+gamepad1.right_stick_x * turn;
+		
+		// Vertical Movement
+		flp = flp+gamepad1.left_stick_y * speed;
+		frp = frp+gamepad1.left_stick_y * speed;
+		blp = blp+gamepad1.left_stick_y * speed;
+		brp = brp+gamepad1.left_stick_y * speed;
+		
+		// Horizontal Movement
+		flp = (flp - gamepad1.left_stick_x) * speed;
+		frp = (frp + gamepad1.left_stick_x) * speed;
+		blp = (blp + gamepad1.left_stick_x) * speed;
+		brp = (brp - gamepad1.left_stick_x) * speed;
+		
+		// Set motor powers
+		frontLeft.setPower(flp);
+		frontRight.setPower(frp);
+		backLeft.setPower(blp);
+		backRight.setPower(brp);
+		
+		// Telemetry
 		telemetry.update();
 	  }
 	}
