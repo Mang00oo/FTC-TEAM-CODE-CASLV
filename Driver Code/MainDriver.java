@@ -1,4 +1,4 @@
-// Main Driver code for FTC Team 19810
+//Main Driver code for FTC Team 19810
 
 // Import packages
 package org.firstinspires.ftc.teamcode;
@@ -35,6 +35,9 @@ public class MainDriver extends LinearOpMode {
   
   private Servo shooter;
   
+  private Servo suspensionLeft;
+  private Servo suspensionRight;
+  
   @Override
   public void runOpMode() {
 	
@@ -55,6 +58,9 @@ public class MainDriver extends LinearOpMode {
 	claw = hardwareMap.get(Servo.class, "claw");
 	clawPivotLeft = hardwareMap.get(Servo.class, "clawPivotLeft");
 	clawPivotRight = hardwareMap.get(Servo.class, "clawPivotRight");
+	
+	suspensionRight = hardwareMap.get(Servo.class, "suspensionRight");
+	suspensionLeft = hardwareMap.get(Servo.class, "suspensionLeft");
 	
 	// Set motor directions
 	//frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -80,11 +86,22 @@ public class MainDriver extends LinearOpMode {
 	  boolean intakeOn = false;
 	  boolean buttonPress = false;
 	  
+	  suspensionLeft.setPosition(0);
+	  suspensionRight.setPosition(1);
+	  
+	  
 	  while (opModeIsActive()) {
 		
 		// Arm Movement
 		armLeft.setPower((gamepad1.left_trigger * -1)-(gamepad1.right_trigger * -1));
 		armRight.setPower((gamepad1.left_trigger * 1)-(gamepad1.right_trigger * 1));
+		
+		// Suspension
+		if (gamepad1.triangle)
+		{
+			suspensionLeft.setPosition(1);
+			suspensionRight.setPosition(0);
+		}
 		
 		// Intake Toggle
 		if (gamepad1.square && buttonPress == false)
@@ -92,15 +109,25 @@ public class MainDriver extends LinearOpMode {
 			intakeOn = !intakeOn;
 			buttonPress = true;
 		}
-		if (intakeOn)
+		if (gamepad1.cross)
 		{
-			intakeTop.setPower(-0.8);
-			intakeBottom.setPower(10);
-		} else
-		{
-			intakeTop.setPower(0);
-			intakeBottom.setPower(0);
+			intakeTop.setPower(1);
+			intakeBottom.setPower(-1);
 		}
+		else
+		{
+			if (intakeOn)
+			{
+				intakeTop.setPower(-0.8);
+				intakeBottom.setPower(10);
+			}
+			else
+			{
+				intakeTop.setPower(0);
+				intakeBottom.setPower(0);
+			}
+		}
+		
 		if (gamepad1.square == false)
 		{
 			buttonPress = false;
@@ -110,13 +137,13 @@ public class MainDriver extends LinearOpMode {
 		
 		if (gamepad1.right_bumper)
 		{
-			clawPivotLeft.setPosition(1);
-			clawPivotRight.setPosition(0);
+			clawPivotLeft.setPosition(0.45);
+			clawPivotRight.setPosition(1-0.45);
 		}
 		else
 		{
-			clawPivotLeft.setPosition(1);
-			clawPivotRight.setPosition(0);
+			clawPivotLeft.setPosition(0.34);
+			clawPivotRight.setPosition(1-0.34);
 		}
 		
 		if (gamepad1.left_bumper)
@@ -173,6 +200,7 @@ public class MainDriver extends LinearOpMode {
 		backRight.setPower(brp);
 		
 		// Telemetry
+		telemetry.addData("Pivot", clawPivotRight.getPosition());
 		telemetry.update();
 	  }
 	}
