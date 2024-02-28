@@ -54,8 +54,13 @@ public class MainAuton extends LinearOpMode {
 	private double blp;
 	private double brp;
 	
-	private Servo armChute;
-	private DcMotor arm;
+	private Servo clawPivotLeft;
+	private Servo clawPivotRight;
+	private Servo claw;
+	
+	private Servo clawPivotLeft;
+	private Servo clawPivotRight;
+	private Servo claw;
 
 	// Declare OpMode members.
 	private ElapsedTime runtime = new ElapsedTime();;
@@ -83,8 +88,12 @@ public class MainAuton extends LinearOpMode {
 		frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
 		frontRight = hardwareMap.get(DcMotor.class, "frontRight");
 		
-		armChute = hardwareMap.get(Servo.class, "armChute");
-		arm = hardwareMap.get(DcMotor.class, "armMotor");
+		claw = hardwareMap.get(Servo.class, "claw");
+		clawPivotLeft = hardwareMap.get(Servo.class, "clawPivotLeft");
+		clawPivotRight = hardwareMap.get(Servo.class, "clawPivotRight");
+		
+		armLeft = hardwareMap.get(DcMotor.class, "armLeft");
+		armRight = hardwareMap.get(DcMotor.class, "armRight");
 			
 		// Set Motor Directions
 		//frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -113,7 +122,8 @@ public class MainAuton extends LinearOpMode {
 		waitForStart();
 		runtime.reset();
 		
-		armChute.setPosition(0.2);
+		clawPivotLeft.setPosition(0.603);
+		clawPivotRight.setPosition(1-0.603);
 
 		// Run until the end of the match (driver presses STOP)
 		while (opModeIsActive()) {
