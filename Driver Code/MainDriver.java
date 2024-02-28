@@ -86,8 +86,8 @@ public class MainDriver extends LinearOpMode {
 	  boolean intakeOn = false;
 	  boolean buttonPress = false;
 	  
-	  suspensionLeft.setPosition(0);
-	  suspensionRight.setPosition(1);
+	  suspensionLeft.setPosition(1);
+	  suspensionRight.setPosition(0);
 	  
 	  
 	  while (opModeIsActive()) {
@@ -99,8 +99,8 @@ public class MainDriver extends LinearOpMode {
 		// Suspension
 		if (gamepad1.triangle)
 		{
-			suspensionLeft.setPosition(1);
-			suspensionRight.setPosition(0);
+			suspensionLeft.setPosition(0);
+			suspensionRight.setPosition(1);
 		}
 		
 		// Intake Toggle
@@ -137,23 +137,24 @@ public class MainDriver extends LinearOpMode {
 		
 		if (gamepad1.right_bumper)
 		{
-			clawPivotLeft.setPosition(0.45);
-			clawPivotRight.setPosition(1-0.45);
+			clawPivotLeft.setPosition(1);
+			clawPivotRight.setPosition(0);
 		}
 		else
 		{
-			clawPivotLeft.setPosition(0.34);
-			clawPivotRight.setPosition(1-0.34);
+			clawPivotLeft.setPosition(0);
+			clawPivotRight.setPosition(1);
 		}
 		
 		if (gamepad1.left_bumper)
 		{
-			claw.setPosition(1);
+			claw.setPosition(0.7);
 		}
 		else
 		{
-			claw.setPosition(0);
+			claw.setPosition(1);
 		}
+		
 		
 		// Shooter
 		if (gamepad1.circle)
