@@ -54,8 +54,12 @@ public class MainAutonBlueAlliance extends LinearOpMode {
 	private double blp;
 	private double brp;
 	
-	private Servo armChute;
-	private DcMotor arm;
+	private Servo clawPivotLeft;
+	private Servo clawPivotRight;
+	private Servo claw;
+	
+	private DcMotor armLeft;
+	private DcMotor armRight;
 
 	// Declare OpMode members.
 	private ElapsedTime runtime = new ElapsedTime();;
@@ -83,8 +87,12 @@ public class MainAutonBlueAlliance extends LinearOpMode {
 		frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
 		frontRight = hardwareMap.get(DcMotor.class, "frontRight");
 		
-		armChute = hardwareMap.get(Servo.class, "armChute");
-		arm = hardwareMap.get(DcMotor.class, "armMotor");
+		claw = hardwareMap.get(Servo.class, "claw");
+		clawPivotLeft = hardwareMap.get(Servo.class, "clawPivotLeft");
+		clawPivotRight = hardwareMap.get(Servo.class, "clawPivotRight");
+		
+		armLeft = hardwareMap.get(DcMotor.class, "armLeft");
+		armRight = hardwareMap.get(DcMotor.class, "armRight");
 			
 		// Set Motor Directions
 		//frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -95,8 +103,6 @@ public class MainAutonBlueAlliance extends LinearOpMode {
 		// SETUP SENSORS
 		imuAsIMU = hardwareMap.get(IMU.class, "imu");
 		distance = hardwareMap.get(DistanceSensor.class, "DistanceSensor");
-		color = hardwareMap.get(ColorSensor.class, "colorSensor");
-		touch = hardwareMap.get(TouchSensor.class, "touchSensor");
 			
 		//INITIALIZE IMU
 		imuAsIMU.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.RIGHT)));
@@ -113,7 +119,8 @@ public class MainAutonBlueAlliance extends LinearOpMode {
 		waitForStart();
 		runtime.reset();
 		
-		armChute.setPosition(0.2);
+		clawPivotLeft.setPosition(0.603);
+		clawPivotRight.setPosition(1-0.603);
 
 		// Run until the end of the match (driver presses STOP)
 		while (opModeIsActive()) {
@@ -315,22 +322,27 @@ public class MainAutonBlueAlliance extends LinearOpMode {
 			// Places pixel on board
 			if (codeStep == 8)
 			{
-				arm.setPower(-0.5);
+				armLeft.setPower(-0.5);
+				armRight.setPower(0.5);
 				if (tick > 32)
 				{
-					armChute.setPosition(0);
+					clawPivotLeft.setPosition(1);
+					clawPivotRight.setPosition(0);
 				}
 				if (tick > 39)
 				{
-					arm.setPower(0);
+					armLeft.setPower(0);
+					armRight.setPower(0);
 				}
 				if (tick > 54)
 				{
-					arm.setPower(0.5);
+					armLeft.setPower(0.5);
+					armRight.setPower(-0.5);
 				}
 				if (tick > 62)
 				{
-					arm.setPower(0);
+					armLeft.setPower(0);
+					armRight.setPower(0);
 				}
 			}
 			
