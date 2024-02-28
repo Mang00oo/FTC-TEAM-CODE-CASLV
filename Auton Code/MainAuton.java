@@ -58,9 +58,8 @@ public class MainAuton extends LinearOpMode {
 	private Servo clawPivotRight;
 	private Servo claw;
 	
-	private Servo clawPivotLeft;
-	private Servo clawPivotRight;
-	private Servo claw;
+	private DcMotor armLeft;
+	private DcMotor armRight;
 
 	// Declare OpMode members.
 	private ElapsedTime runtime = new ElapsedTime();;
@@ -104,8 +103,6 @@ public class MainAuton extends LinearOpMode {
 		// SETUP SENSORS
 		imuAsIMU = hardwareMap.get(IMU.class, "imu");
 		distance = hardwareMap.get(DistanceSensor.class, "DistanceSensor");
-		color = hardwareMap.get(ColorSensor.class, "colorSensor");
-		touch = hardwareMap.get(TouchSensor.class, "touchSensor");
 			
 		//INITIALIZE IMU
 		imuAsIMU.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.RIGHT)));
@@ -312,22 +309,27 @@ public class MainAuton extends LinearOpMode {
 			// Places pixel on board
 			if (codeStep == 8)
 			{
-				arm.setPower(-0.5);
+				armLeft.setPower(-0.5);
+				armRight.setPower(0.5);
 				if (tick > 32)
 				{
-					armChute.setPosition(0);
+					clawPivotLeft.setPosition(1);
+					clawPivotRight.setPosition(0);
 				}
 				if (tick > 39)
 				{
-					arm.setPower(0);
+					armLeft.setPower(0);
+					armRight.setPower(0);
 				}
 				if (tick > 54)
 				{
-					arm.setPower(0.5);
+					armLeft.setPower(0.5);
+					armRight.setPower(-0.5);
 				}
 				if (tick > 62)
 				{
-					arm.setPower(0);
+					armLeft.setPower(0);
+					armRight.setPower(0);
 				}
 			}
 			
