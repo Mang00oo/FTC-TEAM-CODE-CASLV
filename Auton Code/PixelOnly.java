@@ -53,9 +53,6 @@ public class PixelOnly extends LinearOpMode {
 	private double frp;
 	private double blp;
 	private double brp;
-	
-	private Servo armChute;
-	private DcMotor arm;
 
 	// Declare OpMode members.
 	private ElapsedTime runtime = new ElapsedTime();;
@@ -82,10 +79,7 @@ public class PixelOnly extends LinearOpMode {
 		backLeft = hardwareMap.get(DcMotor.class, "backLeft");
 		frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
 		frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-		
-		armChute = hardwareMap.get(Servo.class, "armChute");
-		arm = hardwareMap.get(DcMotor.class, "armMotor");
-			
+
 		// Set Motor Directions
 		//frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 		frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -95,8 +89,6 @@ public class PixelOnly extends LinearOpMode {
 		// SETUP SENSORS
 		imuAsIMU = hardwareMap.get(IMU.class, "imu");
 		distance = hardwareMap.get(DistanceSensor.class, "DistanceSensor");
-		color = hardwareMap.get(ColorSensor.class, "colorSensor");
-		touch = hardwareMap.get(TouchSensor.class, "touchSensor");
 			
 		//INITIALIZE IMU
 		imuAsIMU.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.RIGHT)));
@@ -112,8 +104,6 @@ public class PixelOnly extends LinearOpMode {
 		// Wait for the game to start (driver presses PLAY)
 		waitForStart();
 		runtime.reset();
-		
-		armChute.setPosition(0.2);
 
 		// Run until the end of the match (driver presses STOP)
 		while (opModeIsActive()) {
