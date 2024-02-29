@@ -119,8 +119,9 @@ public class MainAuton extends LinearOpMode {
 		waitForStart();
 		runtime.reset();
 		
-		clawPivotLeft.setPosition(0.603);
-		clawPivotRight.setPosition(1-0.603);
+		clawPivotLeft.setPosition(0);
+		clawPivotRight.setPosition(1);
+		claw.setPosition(1);
 
 		// Run until the end of the match (driver presses STOP)
 		while (opModeIsActive()) {
@@ -159,7 +160,7 @@ public class MainAuton extends LinearOpMode {
 			if (codeStep == 0)
 			{
 				vspeed = 0.3;
-				if (tick > 47)
+				if (tick > 53)
 				{
 				vspeed = 0;
 				tick = 0;
@@ -196,7 +197,7 @@ public class MainAuton extends LinearOpMode {
 				// Check Right Pos.
 				//Turn
 				vspeed = 0;
-				targetRot = 60;
+				targetRot = 70;
 				if(tick>20)
 				{
 					//Check
@@ -226,7 +227,7 @@ public class MainAuton extends LinearOpMode {
 				// Go Left
 				// Turn
 				vspeed = 0;
-				targetRot = -60;
+				targetRot = -70;
 				if(tick > 20)
 				{
 					// Move
@@ -245,7 +246,7 @@ public class MainAuton extends LinearOpMode {
 			if (codeStep == 4)
 			{
 				vspeed = -0.3;
-				if (tick > 15)
+				if (tick > 12)
 				{
 					vspeed = 0;
 					tick = 0;
@@ -260,7 +261,7 @@ public class MainAuton extends LinearOpMode {
 				{
 					vspeed = -0.3;
 				}
-				if (tick > 20)
+				if (tick > 35)
 				{
 					vspeed = 0;
 					tick = 0;
@@ -273,13 +274,27 @@ public class MainAuton extends LinearOpMode {
 			if (codeStep == 6)
 			{
 				vspeed = 0.3;
-				if (distance_M < 18)
+				if (distance_M < 30)
 				{
 					vspeed = 0;
 					tick = 0;
 					codeStep = 7;
 				}
 			}
+			
+			if (codeStep > 7)
+			{
+				vspeed = 0.3;
+				if (distance_M > 14)
+				{
+					vspeed = 0.3;
+				}
+				else
+				{
+					vspeed = 0;
+				}
+			}
+			
 			// Goes to the right position
 			if (codeStep == 7)
 			{
@@ -295,7 +310,7 @@ public class MainAuton extends LinearOpMode {
 				}
 				if (propPos == 2)
 				{
-					targettick = 106;
+					targettick = 120;
 					hspeed = -0.3;
 				}
 				if (tick > targettick)
@@ -309,27 +324,32 @@ public class MainAuton extends LinearOpMode {
 			// Places pixel on board
 			if (codeStep == 8)
 			{
-				armLeft.setPower(-0.5);
-				armRight.setPower(0.5);
-				if (tick > 32)
+				armLeft.setPower(0.5);
+				armRight.setPower(-0.5);
+				targetRot = 90;
+				if (tick > 69)
 				{
-					clawPivotLeft.setPosition(1);
-					clawPivotRight.setPosition(0);
+					clawPivotLeft.setPosition(0.09);
+					clawPivotRight.setPosition(1-0.09);
 				}
-				if (tick > 39)
+				if (tick > 76)
 				{
 					armLeft.setPower(0);
 					armRight.setPower(0);
 				}
-				if (tick > 54)
+				if (tick > 90)
 				{
-					armLeft.setPower(0.5);
-					armRight.setPower(-0.5);
+					claw.setPosition(0.7);
 				}
-				if (tick > 62)
+				if (tick > 93)
 				{
-					armLeft.setPower(0);
-					armRight.setPower(0);
+					armLeft.setPower(-0.2);
+					armRight.setPower(0.2);
+				}
+				if (tick > 130)
+				{
+					armLeft.setPower(-0.1);
+					armRight.setPower(0.1);
 				}
 			}
 			
