@@ -60,6 +60,9 @@ public class MainAuton extends LinearOpMode {
 	
 	private DcMotor armLeft;
 	private DcMotor armRight;
+	
+	private Servo suspensionLeft;
+	private Servo suspensionRight;
 
 	// Declare OpMode members.
 	private ElapsedTime runtime = new ElapsedTime();;
@@ -93,6 +96,9 @@ public class MainAuton extends LinearOpMode {
 		
 		armLeft = hardwareMap.get(DcMotor.class, "armLeft");
 		armRight = hardwareMap.get(DcMotor.class, "armRight");
+		
+		suspensionRight = hardwareMap.get(Servo.class, "suspensionRight");
+		suspensionLeft = hardwareMap.get(Servo.class, "suspensionLeft");
 			
 		// Set Motor Directions
 		//frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -141,6 +147,9 @@ public class MainAuton extends LinearOpMode {
 				rightPower = ((targetRot + robotYaw)/-80)+vspeed;
 				leftPower = ((targetRot + robotYaw)/80)+vspeed;
 			}
+			
+			suspensionLeft.setPosition(0.9);
+			suspensionRight.setPosition(0.1);
 			
 			if (hspeed != 0)
 			{
@@ -329,8 +338,8 @@ public class MainAuton extends LinearOpMode {
 				targetRot = 90;
 				if (tick > 69)
 				{
-					clawPivotLeft.setPosition(0.09);
-					clawPivotRight.setPosition(1-0.09);
+					clawPivotLeft.setPosition(0.65);
+					clawPivotRight.setPosition(1-0.65);
 				}
 				if (tick > 76)
 				{
@@ -358,8 +367,8 @@ public class MainAuton extends LinearOpMode {
 			{
 				frontLeft.setPower(flp);
 				frontRight.setPower(frp);
-				backLeft.setPower(blp);
-				backRight.setPower(brp);
+				backLeft.setPower(blp * 1.3);
+				backRight.setPower(brp * 1.3);
 			}
 			else
 			{
