@@ -60,6 +60,9 @@ public class MainAutonBlueAlliance extends LinearOpMode {
 	
 	private DcMotor armLeft;
 	private DcMotor armRight;
+	
+	private Servo suspensionLeft;
+	private Servo suspensionRight;
 
 	// Declare OpMode members.
 	private ElapsedTime runtime = new ElapsedTime();;
@@ -93,6 +96,9 @@ public class MainAutonBlueAlliance extends LinearOpMode {
 		
 		armLeft = hardwareMap.get(DcMotor.class, "armLeft");
 		armRight = hardwareMap.get(DcMotor.class, "armRight");
+		
+		suspensionRight = hardwareMap.get(Servo.class, "suspensionRight");
+		suspensionLeft = hardwareMap.get(Servo.class, "suspensionLeft");
 			
 		// Set Motor Directions
 		//frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -142,6 +148,9 @@ public class MainAutonBlueAlliance extends LinearOpMode {
 				leftPower = ((targetRot + robotYaw)/80)+vspeed;
 			}
 			
+			suspensionLeft.setPosition(0.9);
+			suspensionRight.setPosition(0.1);
+			
 			if (hspeed != 0)
 			{
 				//Horizontal Movement
@@ -160,7 +169,7 @@ public class MainAutonBlueAlliance extends LinearOpMode {
 			if (codeStep == 0)
 			{
 				vspeed = 0.3;
-				if (tick > 50)
+				if (tick > 53)
 				{
 				vspeed = 0;
 				tick = 0;
@@ -284,7 +293,7 @@ public class MainAutonBlueAlliance extends LinearOpMode {
 			if (codeStep > 7)
 			{
 				vspeed = 0.3;
-				if (distance_M > 12)
+				if (distance_M > 10)
 				{
 					vspeed = 0.3;
 				}
@@ -300,12 +309,12 @@ public class MainAutonBlueAlliance extends LinearOpMode {
 				if (propPos == 0)
 				{
 					hspeed = 0.2;
-					targettick = 70;
+					targettick = 80;
 				}
 				if (propPos == 1)
 				{
 					hspeed = 0.2;
-					targettick = 100;
+					targettick = 140;
 				}
 				if (propPos == 2)
 				{
@@ -328,8 +337,8 @@ public class MainAutonBlueAlliance extends LinearOpMode {
 				targetRot = -90;
 				if (tick > 69)
 				{
-					clawPivotLeft.setPosition(0.09);
-					clawPivotRight.setPosition(1-0.09);
+					clawPivotLeft.setPosition(0.65);
+					clawPivotRight.setPosition(1-0.65);
 				}
 				if (tick > 76)
 				{
@@ -357,8 +366,8 @@ public class MainAutonBlueAlliance extends LinearOpMode {
 			{
 				frontLeft.setPower(flp);
 				frontRight.setPower(frp);
-				backLeft.setPower(blp);
-				backRight.setPower(brp);
+				backLeft.setPower(blp * 1.3);
+				backRight.setPower(brp * 1.3);
 			}
 			else
 			{
