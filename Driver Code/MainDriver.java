@@ -78,8 +78,8 @@ public class MainDriver extends LinearOpMode {
 	  double blp = 0;
 	  double brp = 0;
 	  
-	  double speed = 1.0;
-	  double turn = 1.0;
+	  double speed = 0.7;
+	  double turn = 0.55;
 	  
 	  boolean kaboom = false;
 	  
@@ -99,8 +99,14 @@ public class MainDriver extends LinearOpMode {
 		// Suspension
 		if (gamepad1.triangle)
 		{
-			suspensionLeft.setPosition(0);
-			suspensionRight.setPosition(1);
+			suspensionLeft.setPosition(0.35);
+			suspensionRight.setPosition(0.68);
+		}
+		
+		if (gamepad1.dpad_down)
+		{
+			suspensionLeft.setPosition(1);
+			suspensionRight.setPosition(0);
 		}
 		
 		// Intake Toggle
@@ -137,13 +143,13 @@ public class MainDriver extends LinearOpMode {
 		
 		if (gamepad1.right_bumper)
 		{
-			clawPivotLeft.setPosition(1);
-			clawPivotRight.setPosition(0);
+			clawPivotLeft.setPosition(0.65);
+			clawPivotRight.setPosition(1-0.65);
 		}
 		else
 		{
-			clawPivotLeft.setPosition(0);
-			clawPivotRight.setPosition(1);
+			clawPivotLeft.setPosition(0.035);
+			clawPivotRight.setPosition(1-0.035);
 		}
 		
 		if (gamepad1.left_bumper)
