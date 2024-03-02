@@ -142,7 +142,7 @@ public class PixelOnly extends LinearOpMode {
 			if (codeStep == 0)
 			{
 				vspeed = 0.3;
-				if (tick > 47)
+				if (tick > 53)
 				{
 				vspeed = 0;
 				tick = 0;
@@ -179,7 +179,7 @@ public class PixelOnly extends LinearOpMode {
 				// Check Right Pos.
 				//Turn
 				vspeed = 0;
-				targetRot = 60;
+				targetRot = 70;
 				if(tick>20)
 				{
 					//Check
@@ -209,7 +209,7 @@ public class PixelOnly extends LinearOpMode {
 				// Go Left
 				// Turn
 				vspeed = 0;
-				targetRot = -60;
+				targetRot = -70;
 				if(tick > 20)
 				{
 					// Move
